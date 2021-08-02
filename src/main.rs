@@ -13,6 +13,7 @@ use std::thread;
 use std::time::{Duration, Instant};
 
 mod controls;
+mod menu;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     enable_raw_mode().expect("can run in raw mode");
@@ -23,6 +24,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let backend = CrosstermBackend::new(stdout);
     let mut terminal = Terminal::new(backend)?;
 
+    // Setup the menu
+    let menu_titles = vec!["Home", "Duel", "Stats"];
+    let mut active_menu_item = menu::MenuItem::Home;
     
     disable_raw_mode()?;
     terminal.show_cursor()?;
