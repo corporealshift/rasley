@@ -1,4 +1,4 @@
-# TUI Dueler
+# Seyral
 A text-based game where you duel various enemies. Written in rust.
 ## Technologies
 Uses TUI with a Crossterm backend for rendering the UI and listening for user input to
