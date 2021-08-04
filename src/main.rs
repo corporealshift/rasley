@@ -1,12 +1,8 @@
-use chrono::prelude::*;
 use std::io;
 use tui::Terminal;
 use tui::backend::CrosstermBackend;
 use tui::{
-    layout::Alignment,
-    style::{Color, Modifier, Style},
-    text::{Span, Spans},
-    widgets::{Widget, BorderType, Block, Borders, ListState, Table, Paragraph, Row, Cell},
+    widgets::{ListState},
 };
 use tui::layout::{Layout, Constraint, Direction};
 use crossterm::{
@@ -16,7 +12,7 @@ use crossterm::{
 
 mod controls;
 mod menu;
-mod home;
+mod screens;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     enable_raw_mode().expect("can run in raw mode");
@@ -60,7 +56,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
             // Handle menu selection changed
             match active_menu_item {
-                menu::MenuItem::Home => rect.render_widget(home::render(), chunks[1]),
+                menu::MenuItem::Home => rect.render_widget(screens::home::render(), chunks[1]),
                 menu::MenuItem::Duel => {
                     let combat_chunks = Layout::default()
                         .direction(Direction::Horizontal)
@@ -68,16 +64,17 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                             [Constraint::Percentage(80), Constraint::Percentage(20)].as_ref(),
                         )
                         .split(chunks[1]);
-                    let left = render_combat_log();
-                    let right = render_mini_stats(&stats_state);
+                    let left = screens::combat::render();
+                    let right = screens::stats::render_mini(&stats_state);
                     rect.render_widget(left, combat_chunks[0]);
                     rect.render_widget(right, combat_chunks[1]);
                 }
-                menu::MenuItem::Stats => {}
-                // menu::MenuItem::Stats => rect.render_stateful_widget(render_stats(), chunks[1], &mut stats_state),
+                menu::MenuItem::Stats => rect.render_widget(screens::stats::render(&stats_state), chunks[1]),
             }
         }) {
+            // If draw succeeds great! do nothing because...we drew to the screen
             Ok(_) => {},
+            // Otherwise make sure we clean up the terminal before stopping the program
             Err(error) => {
                 disable_raw_mode()?;
                 terminal.show_cursor()?;
@@ -107,59 +104,4 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
     } // End of render loop
     Ok(())
-}
-
-
-fn render_combat_log<'a>() -> Paragraph<'a> {
-    Paragraph::new(vec![
-        Spans::from(vec![Span::raw("A kobold charges you with a spear!")]),
-        Spans::from(vec![Span::styled("You were hit for 12", Style::default().fg(Color::Red))]),
-        Spans::from(vec![Span::styled(
-            "You attacked for 55 damage",
-            Style::default().fg(Color::LightBlue),
-        )]),
-    ])
-    .alignment(Alignment::Center)
-    .block(
-        Block::default()
-            .borders(Borders::ALL)
-            .style(Style::default().fg(Color::White))
-            .title(menu::MenuItem::Duel.to_string())
-            .border_type(BorderType::Plain),
-    )
-}
-
-fn render_mini_stats<'a>(stats_state: &ListState) -> Table<'a> {
-    Table::new(vec![Row::new(vec![
-        Cell::from(Span::raw("88/100")),
-        Cell::from(Span::raw("57654")),
-        Cell::from(Span::raw("7")),
-    ])])
-    // create the table headers
-    .header(Row::new(vec![
-        Cell::from(Span::styled(
-            "HP",
-            Style::default().add_modifier(Modifier::BOLD),
-        )),
-        Cell::from(Span::styled(
-            "Damage Done",
-            Style::default().add_modifier(Modifier::BOLD),
-        )),
-        Cell::from(Span::styled(
-            "Level",
-            Style::default().add_modifier(Modifier::BOLD),
-        )),
-    ]))
-    .block(
-        Block::default()
-            .borders(Borders::ALL)
-            .style(Style::default().fg(Color::White))
-            .title("Stats")
-            .border_type(BorderType::Plain),
-    )
-    .widths(&[
-        Constraint::Percentage(35),
-        Constraint::Percentage(35),
-        Constraint::Percentage(30),
-    ])
 }
