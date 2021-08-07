@@ -30,6 +30,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Setup the menu
     let mut active_menu_item = menu::MenuItem::Home;
+
+    // Setup player
+    let player = player::New(String::from("Skwared"), skills::Warrior());
     
     // Create stateful list for stats
     let mut stats_state = ListState::default();
@@ -72,7 +75,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                     rect.render_widget(left, combat_chunks[0]);
                     rect.render_widget(right, combat_chunks[1]);
                 }
-                menu::MenuItem::Stats => rect.render_widget(screens::stats::render(&stats_state), chunks[1]),
+                menu::MenuItem::Stats => rect.render_widget(screens::stats::render_stats(&player), chunks[1]),
             }
         }) {
             // If draw succeeds great! do nothing because...we drew to the screen
