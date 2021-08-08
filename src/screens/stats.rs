@@ -1,47 +1,37 @@
 
 use tui::{
     layout::Constraint,
-    text::Span,
+    text::{Span, Spans},
     style::{Color, Modifier, Style},
-    widgets::{Block, Cell, ListState, Table, Row, BorderType, Borders}
+    widgets::{Block, Cell, ListState, List, ListItem, Table, Row, BorderType, Borders}
 };
 
 use crate::player;
 use crate::stats::StatReadouts;
 
+fn row<'a>(title: &str, value: String) -> Row<'a> {
+    Row::new(vec![
+        Cell::from(Span::raw(String::from(title))),
+        Cell::from(Span::raw(value)),
+    ])
+}
+
 pub fn render_stats<'a>(player: &player::Player) -> Table<'a> {
-    Table::new(vec![Row::new(vec![
-        Cell::from(Span::raw(player.stats.strength.to_string())),
-        Cell::from(Span::raw(player.stats.constitution.to_string())),
-        Cell::from(Span::raw(player.stats.insight.to_string())),
-        Cell::from(Span::raw(player.stats.stamina.to_string())),
-        Cell::from(Span::raw(player.stats.knowledge.to_string())),
-        Cell::from(Span::raw(player.stats.presence.to_string())),
-    ])])
+    Table::new(vec![
+        row("Strength", player.stats.strength.to_string()),
+        row("Constitution", player.stats.constitution.to_string()),
+        row("Insight", player.stats.insight.to_string()),
+        row("Knowledge", player.stats.knowledge.to_string()),
+        row("Presence", player.stats.presence.to_string()),
+    ])
     // create the table headers
     .header(Row::new(vec![
         Cell::from(Span::styled(
-            "Strength",
+            "Stat",
             Style::default().add_modifier(Modifier::BOLD),
         )),
         Cell::from(Span::styled(
-            "Constitution",
-            Style::default().add_modifier(Modifier::BOLD),
-        )),
-        Cell::from(Span::styled(
-            "Insight",
-            Style::default().add_modifier(Modifier::BOLD),
-        )),
-        Cell::from(Span::styled(
-            "Stamina",
-            Style::default().add_modifier(Modifier::BOLD),
-        )),
-        Cell::from(Span::styled(
-            "Knowledge",
-            Style::default().add_modifier(Modifier::BOLD),
-        )),
-        Cell::from(Span::styled(
-            "Presence",
+            "Current Value",
             Style::default().add_modifier(Modifier::BOLD),
         )),
     ]))
@@ -53,12 +43,8 @@ pub fn render_stats<'a>(player: &player::Player) -> Table<'a> {
             .border_type(BorderType::Plain),
     )
     .widths(&[
-        Constraint::Percentage(16),
-        Constraint::Percentage(17),
-        Constraint::Percentage(17),
-        Constraint::Percentage(17),
-        Constraint::Percentage(17),
-        Constraint::Percentage(16),
+        Constraint::Percentage(75),
+        Constraint::Percentage(25),
     ])
 }
 
