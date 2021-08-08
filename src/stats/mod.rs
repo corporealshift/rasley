@@ -35,5 +35,6 @@ pub trait StatReadouts {
     fn endurance(&self) -> String;
     fn focus(&self) -> String;
     fn exp(&self) -> String;
+    fn level(&self) -> String;
     fn level_desc(&self) -> String;
 }

@@ -2,8 +2,8 @@ use crate::stats;
 
 #[derive(Clone)]
 pub struct Vocation {
-    name: String,
-    description: String,
+    pub name: String,
+    pub description: String,
     skills: Vec<Skill>,
     starting_stats: stats::Stats,
 }

@@ -1,3 +1,3 @@
 pub mod combat;
 pub mod home;
-pub mod stats;
+pub mod player;

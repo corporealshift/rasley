@@ -3,15 +3,15 @@ use crate::skills::VocationSkills;
 
 #[derive(Clone)]
 pub struct Player {
-    name: String,
+    pub name: String,
     exp: Experience,
-    vocation: skills::Vocation,
+    pub vocation: skills::Vocation,
     pub stats: stats::Stats,
     pub attrs: stats::Attributes,
     pub max_attrs: stats::Attributes,
 }
 
-pub fn New(name: String, vocation: skills::Vocation) -> Player {
+pub fn new(name: String, vocation: skills::Vocation) -> Player {
     let max_hp: f32 = (vocation.stats().constitution * 10) as f32;
     // Insight contributes a little bit to max focus
     let max_focus = (vocation.stats().knowledge as f32) + ((vocation.stats().insight as f32) * 0.1) * 10.0;
@@ -48,6 +48,10 @@ impl stats::StatReadouts for Player {
 
     fn exp(&self) -> String {
         format!("{}/{}", self.exp.current_exp, self.exp.exp_to_next)
+    }
+
+    fn level(&self) -> String {
+        self.exp.level.to_string()
     }
 
     fn level_desc(&self) -> String {
