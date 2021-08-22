@@ -1,5 +1,6 @@
 use crate::{skills, stats};
 use crate::skills::VocationSkills;
+use crate::combat::pawn;
 
 #[derive(Clone)]
 pub struct Player {
@@ -9,6 +10,7 @@ pub struct Player {
     pub stats: stats::Stats,
     pub attrs: stats::Attributes,
     pub max_attrs: stats::Attributes,
+    pub pawn: pawn::Pawn,
 }
 
 pub fn new(name: String, vocation: skills::Vocation) -> Player {
@@ -29,6 +31,7 @@ pub fn new(name: String, vocation: skills::Vocation) -> Player {
         stats: stats,
         attrs: attrs,
         max_attrs: attrs,
+        pawn: pawn::player_start(),
     }
 }
 

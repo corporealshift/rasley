@@ -16,6 +16,7 @@ mod screens;
 mod skills;
 mod stats;
 mod player;
+mod combat;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     enable_raw_mode().expect("can run in raw mode");
