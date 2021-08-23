@@ -71,9 +71,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                             [Constraint::Percentage(80), Constraint::Percentage(20)].as_ref(),
                         )
                         .split(chunks[1]);
-                    let left = screens::combat::render();
+                    screens::combat::render(rect, combat_chunks[0], vec![&player.pawn]);
                     let right = screens::player::render_mini(&stats_state);
-                    rect.render_widget(left, combat_chunks[0]);
+                    // rect.render_widget(left, combat_chunks[0]);
                     rect.render_widget(right, combat_chunks[1]);
                 }
                 menu::MenuItem::Stats => screens::player::render(rect, &player, chunks[1]),
