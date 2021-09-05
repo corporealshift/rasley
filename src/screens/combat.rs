@@ -52,7 +52,7 @@ pub fn render<B>(rect: &mut Frame<B>, area: Rect, pawns: Vec<&pawn::Pawn>) where
         Block::default()
             .borders(Borders::ALL)
             .style(Style::default().fg(Color::White))
-            .title(menu::MenuItem::Duel.to_string())
+            .title(menu::MenuItem::Game.to_string())
             .border_type(BorderType::Plain),
     );
     let player_pawn = pawns.first();

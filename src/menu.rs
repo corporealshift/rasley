@@ -9,8 +9,8 @@ use tui::{
 #[derive(Copy, Clone, Debug)]
 pub enum MenuItem {
     Home,
-    Duel,
-    Stats
+    Game,
+    Player
 }
 
 // This implementation makes it possible for us to match against the
@@ -19,8 +19,8 @@ impl From<MenuItem> for usize {
     fn from(input: MenuItem) -> usize {
         match input {
             MenuItem::Home => 0,
-            MenuItem::Duel => 1,
-            MenuItem::Stats => 2,
+            MenuItem::Game => 1,
+            MenuItem::Player => 2,
         }
     }
 }
@@ -29,14 +29,14 @@ impl ToString for MenuItem {
     fn to_string(&self) -> String {
         match self {
             MenuItem::Home => String::from("Home"),
-            MenuItem::Duel => String::from("Duel"),
-            MenuItem::Stats => String::from("Stats"),
+            MenuItem::Game => String::from("Game"),
+            MenuItem::Player => String::from("Player"),
         }
     }
 }
 
 pub fn render<'a>(active_menu_item: MenuItem) -> Tabs<'a> {
-    let menu_titles = vec![MenuItem::Home, MenuItem::Duel, MenuItem::Stats];
+    let menu_titles = vec![MenuItem::Home, MenuItem::Game, MenuItem::Player];
     let menu = menu_titles
         .iter()
         .map(|t| {

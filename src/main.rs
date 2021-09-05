@@ -64,7 +64,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             // Handle menu selection changed
             match active_menu_item {
                 menu::MenuItem::Home => rect.render_widget(screens::home::render(), chunks[1]),
-                menu::MenuItem::Duel => {
+                menu::MenuItem::Game => {
                     let combat_chunks = Layout::default()
                         .direction(Direction::Horizontal)
                         .constraints(
@@ -76,7 +76,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                     // rect.render_widget(left, combat_chunks[0]);
                     rect.render_widget(right, combat_chunks[1]);
                 }
-                menu::MenuItem::Stats => screens::player::render(rect, &player, chunks[1]),
+                menu::MenuItem::Player => screens::player::render(rect, &player, chunks[1]),
             }
         }) {
             // If draw succeeds great! do nothing because...we drew to the screen
@@ -103,8 +103,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                     break;
                 }
                 KeyCode::Char('h') => active_menu_item = menu::MenuItem::Home,
-                KeyCode::Char('d') => active_menu_item = menu::MenuItem::Duel,
-                KeyCode::Char('s') => active_menu_item = menu::MenuItem::Stats,
+                KeyCode::Char('g') => active_menu_item = menu::MenuItem::Game,
+                KeyCode::Char('p') => active_menu_item = menu::MenuItem::Player,
                 _ => {}
             },
             controls::input::Event::Tick => {}

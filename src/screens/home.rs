@@ -20,7 +20,7 @@ pub fn render<'a>() -> Paragraph<'a> {
             Style::default().fg(Color::LightBlue),
         )]),
         Spans::from(vec![Span::raw("")]),
-        Spans::from(vec![Span::raw("Press 'd' to duel, 's' to view your stats, and 'h' to return to this screen.")]),
+        Spans::from(vec![Span::raw("Press 'g' to to to the game screen, 'p' to view your player info, and 'h' to return to this screen.")]),
         Spans::from(vec![Span::raw("Press 'q' to quit!")]),
     ])
     .alignment(Alignment::Center)
