@@ -18,6 +18,11 @@ mod stats;
 mod player;
 mod combat;
 
+use crate::controls::{
+    movement::Movement,
+    input::PlayerAction,
+};
+
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     enable_raw_mode().expect("can run in raw mode");
 
@@ -33,7 +38,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut active_menu_item = menu::MenuItem::Home;
 
     // Setup player
-    let player = player::new(String::from("Skwared"), skills::Warrior());
+    let mut player = player::new(String::from("Skwared"), skills::Warrior());
+    let mut latest_player_action: Option<PlayerAction> = None;
     
     // Create stateful list for stats
     let mut stats_state = ListState::default();
@@ -60,6 +66,18 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
             // Render the tabs into the window
             rect.render_widget(tabs, chunks[0]);
+
+            // Update the player state, but only when the "Game" menu is active
+            match active_menu_item {
+                menu::MenuItem::Game => {
+                    player.pawn.move_in_dir(latest_player_action.clone());
+                    player.pawn.turn_in_direction(latest_player_action.clone());
+                }
+                _ => {}
+            }
+
+            // Reset player actions
+            latest_player_action = None;
 
             // Handle menu selection changed
             match active_menu_item {
@@ -105,6 +123,14 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 KeyCode::Char('h') => active_menu_item = menu::MenuItem::Home,
                 KeyCode::Char('g') => active_menu_item = menu::MenuItem::Game,
                 KeyCode::Char('p') => active_menu_item = menu::MenuItem::Player,
+                KeyCode::Char('w') => latest_player_action = Some(controls::input::PlayerAction::MoveForward),
+                KeyCode::Char('s') => latest_player_action = Some(controls::input::PlayerAction::MoveBackward),
+                KeyCode::Char('a') => latest_player_action = Some(controls::input::PlayerAction::MoveLeft),
+                KeyCode::Char('d') => latest_player_action = Some(controls::input::PlayerAction::MoveRight),
+                KeyCode::Left => latest_player_action = Some(controls::input::PlayerAction::LookLeft),
+                KeyCode::Right => latest_player_action = Some(controls::input::PlayerAction::LookRight),
+                KeyCode::Down => latest_player_action = Some(controls::input::PlayerAction::LookDown),
+                KeyCode::Up => latest_player_action = Some(controls::input::PlayerAction::LookUp),
                 _ => {}
             },
             controls::input::Event::Tick => {}

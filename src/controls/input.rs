@@ -38,3 +38,16 @@ pub fn listen_for_keys() -> Receiver<Event<KeyEvent>> {
 
     rx
 }
+
+#[derive(Clone)]
+pub enum PlayerAction {
+    MoveForward,
+    MoveBackward,
+    MoveLeft,
+    MoveRight,
+
+    LookLeft,
+    LookRight,
+    LookDown,
+    LookUp,
+}
