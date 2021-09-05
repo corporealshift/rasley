@@ -13,10 +13,13 @@ use tui::{
 };
 use itertools::Itertools;
 
+use crate::player::Player;
 use crate::menu;
-use crate::combat::pawn;
-use crate::combat::pawn::Display;
-use crate::combat::pawn::Position;
+use crate::combat::{
+    pawn,
+    pawn::{ Display, Position},
+    combatant::{ Combatant, CombatFrame}
+};
 
 #[derive(Clone)]
 struct MapSquare {
@@ -24,7 +27,7 @@ struct MapSquare {
     pub color: Color,
 }
 
-pub fn render<B>(rect: &mut Frame<B>, area: Rect, pawns: Vec<&pawn::Pawn>) where
+pub fn render<B>(rect: &mut Frame<B>, area: Rect, player: &Player, combatants: &mut Vec<Box<dyn Combatant>>, combat_log: &Vec<CombatFrame>) where
     B: Backend,
 {
     // Render stats + attrs area
@@ -39,14 +42,11 @@ pub fn render<B>(rect: &mut Frame<B>, area: Rect, pawns: Vec<&pawn::Pawn>) where
                     .as_ref(),
                 )
                 .split(area);
-    let combat_log = Paragraph::new(vec![
-        Spans::from(vec![Span::raw("A kobold charges you with a spear!")]),
-        Spans::from(vec![Span::styled("You were hit for 12", Style::default().fg(Color::Red))]),
-        Spans::from(vec![Span::styled(
-            "You attacked for 55 damage",
-            Style::default().fg(Color::LightBlue),
-        )]),
-    ])
+
+    let combat_spans: Vec<Spans> = combat_log.iter().map(|frame| {
+        Spans::from(vec![Span::styled(&frame.message, frame.style)])
+    }).collect();
+    let combat_log = Paragraph::new(combat_spans)
     .alignment(Alignment::Center)
     .block(
         Block::default()
@@ -55,16 +55,16 @@ pub fn render<B>(rect: &mut Frame<B>, area: Rect, pawns: Vec<&pawn::Pawn>) where
             .title(menu::MenuItem::Game.to_string())
             .border_type(BorderType::Plain),
     );
-    let player_pawn = pawns.first();
+    let player_pawn = &player.pawn;
     // may want to switch from tuples to a struct for MapSquares or something
     // may also want to have a struct for the Map
     let mut raw_map = vec![vec![MapSquare {glyph: '•', color: Color::DarkGray}; 11]; 11];
 
     // Assign player position into the raw map
     // I think these map/unwrap statements could be made generic, or put behind a fn
-    let pawn_position = player_pawn.map(|p| p.pos).unwrap_or(Position{x: 0, y: 0});
-    let pawn_glyph = player_pawn.map(|p| p.glyph()).unwrap_or('X');
-    let pawn_color = player_pawn.map(|p| p.color).unwrap_or(Color::White);
+    let pawn_position = player_pawn.pos;
+    let pawn_glyph = player_pawn.glyph();
+    let pawn_color = player_pawn.color;
     raw_map[pawn_position.y][pawn_position.x] = MapSquare {glyph: pawn_glyph, color: pawn_color};
 
     // I can make this more efficient by creating a for loop and creating a new Span

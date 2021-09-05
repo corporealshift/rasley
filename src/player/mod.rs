@@ -1,6 +1,12 @@
 use crate::{skills, stats};
 use crate::skills::VocationSkills;
-use crate::combat::pawn;
+use crate::combat::{
+    pawn,
+    actions,
+    combatant::{ CombatFrame, Combatant, player_damage, perform_action },
+};
+use crate::controls::input::PlayerAction;
+use crate::combat::pawn::Pawn;
 
 #[derive(Clone)]
 pub struct Player {
@@ -11,6 +17,38 @@ pub struct Player {
     pub attrs: stats::Attributes,
     pub max_attrs: stats::Attributes,
     pub pawn: pawn::Pawn,
+}
+
+impl Combatant for Player {
+    fn get_pawn(&self) -> &Pawn {
+        &self.pawn
+    }
+    fn get_mut_pawn(&mut self) -> &mut Pawn {
+        &mut self.pawn
+    }
+
+    fn take_damage(&mut self, damage: i64) -> CombatFrame {
+        self.attrs.health = self.attrs.health - damage as f32;
+        player_damage(format!("You take {} damage", damage))
+    }
+}
+
+impl actions::CombatAction for Player {
+    fn perform_action(&mut self, action: Option<PlayerAction>, combatants: &mut Vec<Box<dyn Combatant>>) -> Option<CombatFrame> {
+        match action {
+            Some(PlayerAction::BasicAttack) => {
+                let frame = Some(perform_action(String::from("You swing your weapon in front of you")));
+                for combatant in combatants {
+                    if combatant.get_pawn().pos != self.get_pawn().pos {
+                        combatant.take_damage(50);
+                    }
+                }
+                frame
+            }
+            _ => None
+        }
+    }
+
 }
 
 pub fn new(name: String, vocation: skills::Vocation) -> Player {

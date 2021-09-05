@@ -23,6 +23,9 @@ use crate::controls::{
     input::PlayerAction,
 };
 
+use crate::combat::combatant::{Combatant, CombatFrame};
+use crate::combat::actions::CombatAction;
+
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     enable_raw_mode().expect("can run in raw mode");
 
@@ -40,6 +43,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Setup player
     let mut player = player::new(String::from("Skwared"), skills::Warrior());
     let mut latest_player_action: Option<PlayerAction> = None;
+
+    // Setup combat
+    let mut combatants: Vec<Box<dyn Combatant>> = vec![];
+    let mut combat_log: Vec<CombatFrame> = vec![];
     
     // Create stateful list for stats
     let mut stats_state = ListState::default();
@@ -72,6 +79,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 menu::MenuItem::Game => {
                     player.pawn.move_in_dir(latest_player_action.clone());
                     player.pawn.turn_in_direction(latest_player_action.clone());
+                    match player.perform_action(latest_player_action.clone(), &mut combatants) {
+                        Some(frame) => combat_log.push(frame),
+                        None => {}
+                    }
                 }
                 _ => {}
             }
@@ -89,7 +100,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                             [Constraint::Percentage(80), Constraint::Percentage(20)].as_ref(),
                         )
                         .split(chunks[1]);
-                    screens::combat::render(rect, combat_chunks[0], vec![&player.pawn]);
+                    screens::combat::render(rect, combat_chunks[0], &player, &mut combatants, &combat_log);
                     let right = screens::player::render_mini(&stats_state);
                     // rect.render_widget(left, combat_chunks[0]);
                     rect.render_widget(right, combat_chunks[1]);
@@ -131,6 +142,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 KeyCode::Right => latest_player_action = Some(controls::input::PlayerAction::LookRight),
                 KeyCode::Down => latest_player_action = Some(controls::input::PlayerAction::LookDown),
                 KeyCode::Up => latest_player_action = Some(controls::input::PlayerAction::LookUp),
+                KeyCode::Char(' ') => latest_player_action = Some(controls::input::PlayerAction::BasicAttack),
                 _ => {}
             },
             controls::input::Event::Tick => {}

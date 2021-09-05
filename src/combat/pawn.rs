@@ -15,7 +15,7 @@ pub enum Orientation {
     South,
 }
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Eq, PartialEq)]
 pub struct Position {
     pub x: usize,
     pub y: usize,

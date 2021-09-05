@@ -27,6 +27,7 @@ impl VocationSkills for Vocation {
 pub struct Skill {
     name: String,
     description: String,
+    modifier: i64, 
     range: SkillRange,
     skill_type: SkillType,
     affliction: Option<Affliction>,
@@ -68,6 +69,7 @@ pub fn Warrior() -> Vocation {
             range: SkillRange::Melee,
             skill_type: SkillType::ImmediateDamage,
             affliction: None,
+            modifier: 50,
         }],
         starting_stats: stats::Stats{
             strength: 10,

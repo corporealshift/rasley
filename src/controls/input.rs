@@ -50,4 +50,6 @@ pub enum PlayerAction {
     LookRight,
     LookDown,
     LookUp,
+
+    BasicAttack,
 }
