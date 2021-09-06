@@ -8,6 +8,7 @@ pub struct CombatFrame {
 
 pub fn player_damage(msg: String) -> CombatFrame { CombatFrame {message: msg, style: Style::default().fg(Color::Red)} }
 pub fn perform_action(msg: String) -> CombatFrame { CombatFrame {message: msg, style: Style::default().fg(Color::Gray)} }
+pub fn enemy_damage(msg: String) -> CombatFrame { CombatFrame {message: msg, style: Style::default().fg(Color::LightBlue)}}
 
 pub trait Combatant {
     fn get_pawn(&self) -> &Pawn;

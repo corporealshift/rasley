@@ -169,6 +169,15 @@ pub fn player_start() -> Pawn {
     }
 }
 
+pub fn enemy_start(glyph_set: HashMap<Orientation, char>, color: Color) -> Pawn {
+    Pawn {
+        orientation: Orientation::South,
+        pos: Position{ x: 5, y: 0},
+        glyph_set: glyph_set,
+        color: color
+    }
+}
+
 pub trait Display {
     fn glyph(&self) -> char;
 }

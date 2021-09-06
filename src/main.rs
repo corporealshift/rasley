@@ -18,11 +18,14 @@ mod skills;
 mod stats;
 mod player;
 mod combat;
+mod enemies;
 
 use crate::controls::{
     movement::Movement,
     input::PlayerAction,
 };
+
+use crate::enemies::new_dummy;
 
 use crate::combat::combatant::{Combatant, CombatFrame};
 use crate::combat::actions::CombatAction;
@@ -83,6 +86,14 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                     match player.perform_action(latest_player_action.clone(), &mut combatants) {
                         Some(frame) => combat_log.push(frame),
                         None => {}
+                    }
+
+                    match latest_player_action {
+                        Some(controls::input::PlayerAction::StartLevel) => {
+                            let dummy = new_dummy();
+                            combatants.insert((dummy.get_pawn().pos.x, dummy.get_pawn().pos.y), Box::new(dummy));
+                        }
+                        _ => {}
                     }
                 }
                 _ => {}

@@ -67,6 +67,10 @@ pub fn render<B>(rect: &mut Frame<B>, area: Rect, player: &Player, combatants: &
     let pawn_glyph = player_pawn.glyph();
     let pawn_color = player_pawn.color;
     raw_map[pawn_position.y][pawn_position.x] = MapSquare {glyph: pawn_glyph, color: pawn_color};
+    for (pos, combatant) in combatants {
+        let p = combatant.get_pawn();
+        raw_map[p.pos.y][p.pos.x] = MapSquare {glyph: p.glyph(), color: p.color}
+    }
 
     // I can make this more efficient by creating a for loop and creating a new Span
     // each time the glyph or color changes. That might get a bit messy looking so I
