@@ -7,9 +7,9 @@ use std::convert::TryFrom;
 
 pub fn squares_in_direction(pawn: &Pawn, num_squares: i8, direction: &Orientation) -> Vec<Position> {
     match direction {
-        Orientation::North => add_y_if_valid(pawn, num_squares, |p_y, delta| { usize::try_from(p_y - delta).ok() }),
+        Orientation::North => add_y_if_valid(pawn, num_squares, |p_y, delta| { usize::try_from(p_y as isize - delta as isize).ok() }),
         Orientation::South => add_y_if_valid(pawn, num_squares, |p_y, delta| { usize::try_from(p_y + delta).ok() }),
-        Orientation::West => add_x_if_valid(pawn, num_squares, |p_x, delta| { usize::try_from(p_x - delta ).ok() }),
+        Orientation::West => add_x_if_valid(pawn, num_squares, |p_x, delta| { usize::try_from(p_x as isize - delta as isize ).ok() }),
         Orientation::East => add_x_if_valid(pawn, num_squares, |p_x, delta| { usize::try_from(p_x + delta ).ok() }),
     }
 }

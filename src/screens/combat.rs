@@ -43,8 +43,8 @@ pub fn render<B>(rect: &mut Frame<B>, area: Rect, player: &Player, combatants: &
                     .as_ref(),
                 )
                 .split(area);
-
-    let combat_spans: Vec<Spans> = combat_log.iter().map(|frame| {
+                // let sum = stored_nums.iter().rev().take(2)
+    let combat_spans: Vec<Spans> = combat_log.iter().rev().take(12).rev().map(|frame| {
         Spans::from(vec![Span::styled(&frame.message, frame.style)])
     }).collect();
     let combat_log = Paragraph::new(combat_spans)
@@ -67,7 +67,11 @@ pub fn render<B>(rect: &mut Frame<B>, area: Rect, player: &Player, combatants: &
     let pawn_glyph = player_pawn.glyph();
     let pawn_color = player_pawn.color;
     raw_map[pawn_position.y][pawn_position.x] = MapSquare {glyph: pawn_glyph, color: pawn_color};
-    for (pos, combatant) in combatants {
+
+    // Filter out dead enemies
+    let living_combatants: HashMap<&(usize, usize), &Box<dyn Combatant>> = combatants.iter().filter(|(k, v)| { !v.is_dead() }).collect();
+    // Render enemies
+    for (pos, combatant) in living_combatants {
         let p = combatant.get_pawn();
         raw_map[p.pos.y][p.pos.x] = MapSquare {glyph: p.glyph(), color: p.color}
     }

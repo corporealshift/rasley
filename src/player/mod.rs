@@ -22,7 +22,12 @@ pub struct Player {
     pub pawn: pawn::Pawn,
 }
 
+pub const PLAYER_ID: u8 = 1;
+
 impl Combatant for Player {
+    fn get_id(&self) -> u8 {
+        PLAYER_ID
+    }
     fn get_pawn(&self) -> &Pawn {
         &self.pawn
     }
@@ -34,6 +39,10 @@ impl Combatant for Player {
         self.attrs.health = self.attrs.health - damage as f32;
         player_damage(format!("You take {} damage", damage))
     }
+
+    fn is_dead(&self) -> bool {
+        self.attrs.health <= 0.0
+    }
 }
 
 impl actions::CombatAction for Player {
@@ -44,7 +53,7 @@ impl actions::CombatAction for Player {
 
                 let squares = squares_in_direction(&self.pawn, 1, &self.pawn.orientation);
                 // Now I just have to match the squares to the combatants
-                frames.push(perform_action(format!("Squares: {:?}", squares)));
+                // frames.push(perform_action(format!("Squares: {:?}", squares)));
                 for square in squares {
                     match combatants.get_mut(&(square.x, square.y)) {
                         Some(combatant) => {frames.push(combatant.take_damage(5));},

@@ -91,7 +91,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                     // Spawn the next enemy
                     match latest_player_action {
                         Some(controls::input::PlayerAction::StartLevel) => {
-                            let dummy = new_dummy();
+                            let dummy = new_dummy(2);
                             combatants.insert((dummy.get_pawn().pos.x, dummy.get_pawn().pos.y), Box::new(dummy));
                         }
                         _ => {}
@@ -99,6 +99,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 }
                 _ => {}
             }
+
+            // Update combatants list - If one has died we need to delete it from the set
+            // let living_combatants: HashMap<&(usize, usize), &Box<dyn Combatant>> = combatants.iter().filter(|(k, v)| { !v.is_dead() }).collect();
 
             // Reset player actions
             latest_player_action = None;
@@ -122,7 +125,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             }
         }) {
             // If draw succeeds great! do nothing because...we drew to the screen
-            Ok(_) => {},
+            Ok(_) => {
+                combatants = combatants.into_iter().filter(|(k, v)| { !v.is_dead() }).collect();
+            },
             // Otherwise make sure we clean up the terminal before stopping the program
             Err(error) => {
                 disable_raw_mode()?;
