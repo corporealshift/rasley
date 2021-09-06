@@ -37,22 +37,23 @@ impl Combatant for Player {
 }
 
 impl actions::CombatAction for Player {
-    fn perform_action(&mut self, action: Option<PlayerAction>, combatants: &mut HashMap<(usize, usize), Box<dyn Combatant>>) -> Option<CombatFrame> {
+    fn perform_action(&mut self, action: Option<PlayerAction>, combatants: &mut HashMap<(usize, usize), Box<dyn Combatant>>) -> Vec<CombatFrame> {
         match action {
             Some(PlayerAction::BasicAttack) => {
-                let frame = Some(perform_action(String::from("You swing your weapon in front of you")));
+                let mut frames = vec![perform_action(String::from("You swing your weapon in front of you"))];
 
                 let squares = squares_in_direction(&self.pawn, 1, &self.pawn.orientation);
                 // Now I just have to match the squares to the combatants
+                frames.push(perform_action(format!("Squares: {:?}", squares)));
                 for square in squares {
                     match combatants.get_mut(&(square.x, square.y)) {
-                        Some(combatant) => {combatant.take_damage(5);},
+                        Some(combatant) => {frames.push(combatant.take_damage(5));},
                         _ => {}
                     }
                 }
-                frame
+                frames
             }
-            _ => None
+            _ => Vec::new()
         }
     }
 

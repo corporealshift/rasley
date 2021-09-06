@@ -16,7 +16,7 @@ pub fn squares_in_direction(pawn: &Pawn, num_squares: i8, direction: &Orientatio
 
 fn add_y_if_valid(pawn: &Pawn, num_squares: i8, f: fn(usize, usize) -> Option<usize>) -> Vec<Position> {
     let mut squares = vec![];
-    for i in 1..num_squares {
+    for i in 1..=num_squares {
         // Make sure i is inside the arena
         if i <= 10 {
             // Make sure we're _still_ in bounds after we do the mathses
@@ -31,7 +31,7 @@ fn add_y_if_valid(pawn: &Pawn, num_squares: i8, f: fn(usize, usize) -> Option<us
 
 fn add_x_if_valid(pawn: &Pawn, num_squares: i8, f: fn(usize, usize) -> Option<usize>) -> Vec<Position> {
     let mut squares = vec![];
-    for i in 1..num_squares {
+    for i in 1..=num_squares {
         // Make sure i is inside the arena
         if i <= 10 {
             // Make sure we're _still_ in bounds after we do the mathses

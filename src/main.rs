@@ -83,11 +83,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 menu::MenuItem::Game => {
                     player.pawn.move_in_dir(latest_player_action.clone());
                     player.pawn.turn_in_direction(latest_player_action.clone());
-                    match player.perform_action(latest_player_action.clone(), &mut combatants) {
-                        Some(frame) => combat_log.push(frame),
-                        None => {}
+                    // Append the combat log frames
+                    let frames = player.perform_action(latest_player_action.clone(), &mut combatants);
+                    for frame in frames {
+                        combat_log.push(frame);
                     }
-
+                    // Spawn the next enemy
                     match latest_player_action {
                         Some(controls::input::PlayerAction::StartLevel) => {
                             let dummy = new_dummy();
