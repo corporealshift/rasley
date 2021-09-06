@@ -3,13 +3,8 @@ use tui::style::{Style, Color};
 use crate::player::PLAYER_ID;
 
 pub enum Combat {
-    None,
-
     TookDamage,
     Killed,
-
-    EnemyTookDamage,
-    EnemyKilled,
 }
 
 pub struct CombatResult {

@@ -1,7 +1,9 @@
-use crate::combat::pawn::{
-    Orientation,
-    Pawn,
-    Position
+use crate::combat::{
+    pawn::{
+        Orientation,
+        Pawn,
+        Position,
+    }
 };
 use std::convert::TryFrom;
 

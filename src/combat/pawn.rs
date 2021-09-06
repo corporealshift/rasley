@@ -6,6 +6,7 @@ use crate::controls::{
     movement::Movement,
     input::PlayerAction,
 };
+use crate::combat::combatant::Combatant;
 
 #[derive(Hash, Clone, Eq, PartialEq)]
 pub enum Orientation {
@@ -31,43 +32,43 @@ pub struct Pawn {
 
 
 impl Movement for Pawn {
-    fn move_in_dir(&mut self, direction: Option<PlayerAction>) -> bool {
+    fn move_in_dir(&mut self, direction: Option<PlayerAction>, combatants: &HashMap<(usize, usize), Box<dyn Combatant>>) -> bool {
         match direction {
             Some(dir) => 
             match &self.orientation {
                 Orientation::North => {
                     match dir {
-                        PlayerAction::MoveForward => move_y(self, -1),
-                        PlayerAction::MoveBackward => move_y(self, 1),
-                        PlayerAction::MoveLeft => move_x(self, -1),
-                        PlayerAction::MoveRight => move_x(self, 1),
+                        PlayerAction::MoveForward => move_y(self, -1, combatants),
+                        PlayerAction::MoveBackward => move_y(self, 1, combatants),
+                        PlayerAction::MoveLeft => move_x(self, -1, combatants),
+                        PlayerAction::MoveRight => move_x(self, 1, combatants),
                         _ => false
                     }
                 }
                 Orientation::South => {
                     match dir {
-                        PlayerAction::MoveForward => move_y(self, 1),
-                        PlayerAction::MoveBackward => move_y(self, -1),
-                        PlayerAction::MoveLeft => move_x(self, 1),
-                        PlayerAction::MoveRight => move_x(self, -1),
+                        PlayerAction::MoveForward => move_y(self, 1, combatants),
+                        PlayerAction::MoveBackward => move_y(self, -1, combatants),
+                        PlayerAction::MoveLeft => move_x(self, 1, combatants),
+                        PlayerAction::MoveRight => move_x(self, -1, combatants),
                         _ => false
                     }
                 }
                 Orientation::West => {
                     match dir {
-                        PlayerAction::MoveForward => move_x(self, -1),
-                        PlayerAction::MoveBackward => move_x(self, 1),
-                        PlayerAction::MoveLeft => move_y(self, 1),
-                        PlayerAction::MoveRight => move_y(self, -1),
+                        PlayerAction::MoveForward => move_x(self, -1, combatants),
+                        PlayerAction::MoveBackward => move_x(self, 1, combatants),
+                        PlayerAction::MoveLeft => move_y(self, 1, combatants),
+                        PlayerAction::MoveRight => move_y(self, -1, combatants),
                         _ => false
                     }
                 }
                 Orientation::East => {
                     match dir {
-                        PlayerAction::MoveForward => move_x(self, 1),
-                        PlayerAction::MoveBackward => move_x(self, -1),
-                        PlayerAction::MoveLeft => move_y(self, -1),
-                        PlayerAction::MoveRight => move_y(self, 1),
+                        PlayerAction::MoveForward => move_x(self, 1, combatants),
+                        PlayerAction::MoveBackward => move_x(self, -1, combatants),
+                        PlayerAction::MoveLeft => move_y(self, -1, combatants),
+                        PlayerAction::MoveRight => move_y(self, 1, combatants),
                         _ => false
                     }
                 }
@@ -127,12 +128,15 @@ impl Movement for Pawn {
     }
 }
 
-fn move_y(pawn: &mut Pawn, spaces: i8) -> bool {
+fn move_y(pawn: &mut Pawn, spaces: i8, combatants: &HashMap<(usize, usize), Box<dyn Combatant>>) -> bool {
     // This could give a negative number, which is invalid for a usize
     let new_pos = pawn.pos.y as i8 + spaces;
     // Make sure we have a valid usize before we use it
     match usize::try_from(new_pos).ok() {
         Some(compat_pos) if compat_pos <= 10 => {
+            if combatants.contains_key(&(pawn.pos.x, compat_pos)) {
+                return false;
+            }
             pawn.pos.y = compat_pos;
             return true;
         }
@@ -140,12 +144,15 @@ fn move_y(pawn: &mut Pawn, spaces: i8) -> bool {
     }
 }
 
-fn move_x(pawn: &mut Pawn, spaces: i8) -> bool {
+fn move_x(pawn: &mut Pawn, spaces: i8, combatants: &HashMap<(usize, usize), Box<dyn Combatant>>) -> bool {
     // This could give a negative number, which is invalid for a usize
     let new_pos = pawn.pos.x as i8 + spaces;
     // Make sure we have a valid usize before we use it
     match usize::try_from(new_pos).ok() {
         Some(compat_pos) if compat_pos <= 10 => {
+            if combatants.contains_key(&(compat_pos, pawn.pos.y)) {
+                return false;
+            }
             pawn.pos.x = compat_pos;
             return true;
         }

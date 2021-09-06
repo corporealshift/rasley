@@ -30,6 +30,7 @@ use crate::enemies::new_dummy;
 use crate::combat::combatant::{Combatant, CombatFrame};
 use crate::combat::actions::CombatAction;
 
+
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     enable_raw_mode().expect("can run in raw mode");
 
@@ -81,7 +82,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             // Update the player state, but only when the "Game" menu is active
             match active_menu_item {
                 menu::MenuItem::Game => {
-                    player.pawn.move_in_dir(latest_player_action.clone());
+                    player.pawn.move_in_dir(latest_player_action.clone(), &combatants);
                     player.pawn.turn_in_direction(latest_player_action.clone());
                     // Append the combat log frames
                     let frames = player.perform_action(latest_player_action.clone(), &mut combatants);
@@ -126,7 +127,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         }) {
             // If draw succeeds great! do nothing because...we drew to the screen
             Ok(_) => {
-                combatants = combatants.into_iter().filter(|(k, v)| { !v.is_dead() }).collect();
+                combatants = combatants.into_iter().filter(|(_, v)| { !v.is_dead() }).collect();
             },
             // Otherwise make sure we clean up the terminal before stopping the program
             Err(error) => {

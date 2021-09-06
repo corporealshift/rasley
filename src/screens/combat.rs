@@ -2,14 +2,12 @@ use std::collections::HashMap;
 use tui::{
     backend::Backend,
     Frame,
-    symbols::Marker,
 
     layout::{Layout, Constraint, Direction, Rect, Alignment},
     style::{Color, Style},
     text::{Span, Spans},
     widgets::{
         Block, Borders, BorderType, Paragraph,
-        canvas::{Canvas, Rectangle,},
     },
 };
 use itertools::Itertools;
@@ -18,7 +16,7 @@ use crate::player::Player;
 use crate::menu;
 use crate::combat::{
     pawn,
-    pawn::{ Display, Position},
+    pawn::{ Display },
     combatant::{ Combatant, CombatFrame}
 };
 
@@ -69,9 +67,9 @@ pub fn render<B>(rect: &mut Frame<B>, area: Rect, player: &Player, combatants: &
     raw_map[pawn_position.y][pawn_position.x] = MapSquare {glyph: pawn_glyph, color: pawn_color};
 
     // Filter out dead enemies
-    let living_combatants: HashMap<&(usize, usize), &Box<dyn Combatant>> = combatants.iter().filter(|(k, v)| { !v.is_dead() }).collect();
+    let living_combatants: HashMap<&(usize, usize), &Box<dyn Combatant>> = combatants.iter().filter(|(_, v)| { !v.is_dead() }).collect();
     // Render enemies
-    for (pos, combatant) in living_combatants {
+    for (_, combatant) in living_combatants {
         let p = combatant.get_pawn();
         raw_map[p.pos.y][p.pos.x] = MapSquare {glyph: p.glyph(), color: p.color}
     }
