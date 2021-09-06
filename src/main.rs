@@ -1,4 +1,5 @@
 use std::io;
+use std::collections::HashMap;
 use tui::Terminal;
 use tui::backend::CrosstermBackend;
 use tui::{
@@ -45,7 +46,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut latest_player_action: Option<PlayerAction> = None;
 
     // Setup combat
-    let mut combatants: Vec<Box<dyn Combatant>> = vec![];
+    let mut combatants: HashMap<(usize, usize), Box<dyn Combatant>> = HashMap::new();
     let mut combat_log: Vec<CombatFrame> = vec![];
     
     // Create stateful list for stats
@@ -143,6 +144,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 KeyCode::Down => latest_player_action = Some(controls::input::PlayerAction::LookDown),
                 KeyCode::Up => latest_player_action = Some(controls::input::PlayerAction::LookUp),
                 KeyCode::Char(' ') => latest_player_action = Some(controls::input::PlayerAction::BasicAttack),
+                KeyCode::Char('n') => latest_player_action = Some(controls::input::PlayerAction::StartLevel),
                 _ => {}
             },
             controls::input::Event::Tick => {}

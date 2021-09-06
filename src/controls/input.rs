@@ -52,4 +52,6 @@ pub enum PlayerAction {
     LookUp,
 
     BasicAttack,
+
+    StartLevel,
 }

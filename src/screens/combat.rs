@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use tui::{
     backend::Backend,
     Frame,
@@ -27,7 +28,7 @@ struct MapSquare {
     pub color: Color,
 }
 
-pub fn render<B>(rect: &mut Frame<B>, area: Rect, player: &Player, combatants: &mut Vec<Box<dyn Combatant>>, combat_log: &Vec<CombatFrame>) where
+pub fn render<B>(rect: &mut Frame<B>, area: Rect, player: &Player, combatants: &mut HashMap<(usize, usize), Box<dyn Combatant>>, combat_log: &Vec<CombatFrame>) where
     B: Backend,
 {
     // Render stats + attrs area
